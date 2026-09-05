@@ -56,6 +56,7 @@ services:
       KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf"
     volumes:
       - ./kafka_server_jaas.conf:/etc/kafka/secrets/kafka_server_jaas.conf
+      - ./client.properties:/etc/kafka/secrets/client.properties
 
   web:
     build: .
@@ -82,9 +83,9 @@ services:
       KAFKA_STATUS_TOPIC: ${KAFKA_STATUS_TOPIC}
       KAFKA_SASL_USERNAME: ${KAFKA_SASL_USERNAME}
       KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+      web:
+    volumes:
+      - ./logs:/app/logs
 
 volumes:
   postgres_data:

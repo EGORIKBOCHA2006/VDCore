@@ -2,6 +2,7 @@ import uuid
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import logging
 
 from .models import DownloadTask
 from .forms import DownloadTaskForm
@@ -9,13 +10,16 @@ from .services.partitioner import partition_range
 from .services.kafka_producer import send_chunk_task, send_status_update
 
 WORKERS_COUNT = 3
-
+logger = logging.getLogger("django")
 
 @login_required
 def create_task(request):
     if request.method == "POST":
         form = DownloadTaskForm(request.POST)
+        logger.info("POST data: %s", request.POST)
+        logger.info("Form valid: %s, errors: %s", form.is_valid(), form.errors)
         if form.is_valid():
+            logger.info("=== FORM VALID OK, начинаем отправку в Kafka ===")
             start_id = form.cleaned_data["start_id"]
             end_id = form.cleaned_data["end_id"]
 

@@ -1,2 +1,6 @@
 .env
 venv
+__pycache__
+db.sqlite3
+client.properties
+kafka_server_jaas.conf

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Мои задачи{% endblock %}
+
+{% block content %}
+<div class="list-header">
+    <h1>Мои задачи</h1>
+    <a href="{% url 'create_task' %}" class="btn-primary btn-inline">+ Новая задача</a>
+</div>
+
+<div class="task-list">
+    {% for task in tasks %}
+    <div class="task-card">
+        <div class="task-card-top">
+            <span class="task-range">{{ task.start_id }} – {{ task.end_id }}</span>
+            <span class="status-badge status-{{ task.status }}">{{ task.get_status_display }}</span>
+        </div>
+        <div class="task-card-meta">
+            <span>{{ task.chunks_count }} чанков</span>
+            <span>{{ task.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+        <div class="chunk-bar">
+            {% for chunk in task.chunks.all %}
+            <span class="chunk-dot chunk-{{ chunk.status }}" title="{{ chunk.range_start }}-{{ chunk.range_end }}: {{ chunk.get_status_display }}"></span>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="card empty-state">
+        Задач пока нет. <a href="{% url 'create_task' %}">Создать первую</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

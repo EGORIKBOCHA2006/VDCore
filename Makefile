@@ -30,15 +30,15 @@ collectstatic: env-check
 
 fix-perms:
 	mkdir -p logs staticfiles media
-	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
+	chmod -R 777 logs staticfiles media
 
 deploy: env-check
 	mkdir -p logs staticfiles media
+	chmod -R 777 logs staticfiles media
 	docker compose build web
 	docker compose run --rm web migrate --noinput
 	docker compose run --rm web collectstatic --noinput
 	docker compose up -d --force-recreate web
-	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
 
 status:
 	docker compose ps

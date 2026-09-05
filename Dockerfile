@@ -33,8 +33,8 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY --chown=django:django . .
 
-RUN mkdir -p /app/staticfiles /app/media && \
-    chown -R django:django /app/staticfiles /app/media
+RUN mkdir -p /app/staticfiles /app/media /app/logs && \
+    chown -R django:django /app/staticfiles /app/media /app/logs /app
 
 USER django
 

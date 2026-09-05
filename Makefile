@@ -23,10 +23,10 @@ logs:
 	docker compose logs -f web
 
 migrate: env-check
-	docker compose run --rm web migrate --noinput
+	docker compose run --rm --entrypoint python web manage.py collectstatic --noinput
 
 collectstatic: env-check
-	docker compose run --rm web collectstatic --noinput
+	docker compose run --rm --entrypoint python web manage.py collectstatic --noinput
 
 fix-perms:
 	mkdir -p logs staticfiles media
@@ -36,8 +36,8 @@ deploy: env-check
 	mkdir -p logs staticfiles media
 	chmod -R 777 logs staticfiles media
 	docker compose build web
-	docker compose run --rm web migrate --noinput
-	docker compose run --rm web collectstatic --noinput
+	docker compose run --rm --entrypoint python web manage.py migrate --noinput
+	docker compose run --rm --entrypoint python web manage.py collectstatic --noinput
 	docker compose up -d --force-recreate web
 
 status:

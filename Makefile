@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs migrate deploy env-check
+.PHONY: build up down restart logs migrate collectstatic deploy env-check status fix-perms
 
 ENV_FILE=.env
 
@@ -23,13 +23,22 @@ logs:
 	docker compose logs -f web
 
 migrate: env-check
-	docker compose exec web python manage.py migrate
+	docker compose run --rm web migrate --noinput
+
+collectstatic: env-check
+	docker compose run --rm web collectstatic --noinput
+
+fix-perms:
+	mkdir -p logs staticfiles media
+	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
 
 deploy: env-check
-	docker compose pull db pgadmin kafka
+	mkdir -p logs staticfiles media
 	docker compose build web
+	docker compose run --rm web migrate --noinput
+	docker compose run --rm web collectstatic --noinput
 	docker compose up -d --force-recreate web
-	docker compose exec web python manage.py migrate --noinput
+	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
 
 status:
 	docker compose ps

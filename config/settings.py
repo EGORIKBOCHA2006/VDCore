@@ -86,6 +86,11 @@ LOGGING = {
         },
     },
     "loggers": {
+        "": {  # корневой логгер
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
         "django": {
             "handlers": ["console"],
             "level": "INFO",

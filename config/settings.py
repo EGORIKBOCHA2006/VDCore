@@ -74,23 +74,21 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "console": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        "default": {
+            "format": (
+                "%(asctime)s [%(levelname)s] "
+                "%(name)s: %(message)s"
+            ),
         },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "console",
+            "formatter": "default",
             "level": "DEBUG",
         },
     },
     "loggers": {
-        "": {  # корневой логгер
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
         "django": {
             "handlers": ["console"],
             "level": "INFO",
@@ -102,6 +100,11 @@ LOGGING = {
             "propagate": False,
         },
         "tasks": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "tasks.views": {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,

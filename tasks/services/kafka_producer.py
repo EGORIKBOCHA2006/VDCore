@@ -1,8 +1,6 @@
 import json
 import uuid
 import logging
-import logging.handlers
-from pathlib import Path
 from typing import Optional
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
@@ -11,24 +9,7 @@ from django.conf import settings
 
 logger = logging.getLogger("kafka_utils")
 logger.setLevel(logging.DEBUG)
-
-if not logger.handlers:
-    log_dir = Path(settings.BASE_DIR) / "logs"
-    log_dir.mkdir(exist_ok=True)
-
-    file_handler = logging.handlers.RotatingFileHandler(
-        log_dir / "kafka.log",
-        maxBytes=5 * 1024 * 1024,
-        backupCount=3,
-        encoding="utf-8",
-    )
-    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-
-    kafka_lib_logger = logging.getLogger("kafka")
-    kafka_lib_logger.setLevel(logging.DEBUG)
-    kafka_lib_logger.addHandler(file_handler)
+kafka_lib_logger = logging.getLogger("kafka")
 
 
 _producer = None

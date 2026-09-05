@@ -53,8 +53,8 @@ services:
       CLUSTER_ID: ${KAFKA_CLUSTER_ID}
       KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf"
     volumes:
-      - ./kafka_server_jaas.conf:/etc/kafka/secrets/kafka_server_jaas.conf
-      - ./client.properties:/etc/kafka/secrets/client.properties
+      - /srv/vdcore/kafka/kafka_server_jaas.conf:/etc/kafka/secrets/kafka_server_jaas.conf:ro
+      - /srv/vdcore/kafka/client.properties:/etc/kafka/secrets/client.properties:ro
       
 
   web:

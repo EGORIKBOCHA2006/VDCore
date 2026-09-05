@@ -40,6 +40,29 @@ jobs:
           KAFKA_SASL_PASSWORD=${{ secrets.KAFKA_SASL_PASSWORD }}
           KAFKA_CLUSTER_ID=${{ secrets.KAFKA_CLUSTER_ID }}
           EOF
+      
+      - name: Create Kafka JAAS file
+        shell: bash
+        env:
+          KAFKA_ADMIN_PASSWORD: ${{ secrets.KAFKA_ADMIN_PASSWORD }}
+          KAFKA_DJANGO_PASSWORD: ${{ secrets.KAFKA_DJANGO_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          sudo install -d -m 700 /srv/vdcore/kafka
+
+          {
+            printf '%s\n' 'KafkaServer {'
+            printf '%s\n' '    org.apache.kafka.common.security.plain.PlainLoginModule required'
+            printf '%s\n' '    username="admin"'
+            printf '    password="%s"\n' "$KAFKA_ADMIN_PASSWORD"
+            printf '    user_admin="%s"\n' "$KAFKA_ADMIN_PASSWORD"
+            printf '    user_django="%s";\n' "$KAFKA_DJANGO_PASSWORD"
+            printf '%s\n' '};'
+          } | sudo tee /srv/vdcore/kafka/kafka_server_jaas.conf > /dev/null
+
+          sudo chown root:root /srv/vdcore/kafka/kafka_server_jaas.conf
+          sudo chmod 644 /srv/vdcore/kafka/kafka_server_jaas.conf
 
       - name: Deploy with Makefile
         run: make deploy

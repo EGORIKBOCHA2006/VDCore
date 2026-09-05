@@ -41,10 +41,11 @@ jobs:
           KAFKA_CLUSTER_ID=${{ secrets.KAFKA_CLUSTER_ID }}
           EOF
 
-      - name: Create Kafka JAAS configuration
+      - name: Create Kafka security files
         shell: bash
         env:
           KAFKA_ADMIN_PASSWORD: ${{ secrets.KAFKA_ADMIN_PASSWORD }}
+          KAFKA_SASL_USERNAME: ${{ secrets.KAFKA_SASL_USERNAME }}
           KAFKA_SASL_PASSWORD: ${{ secrets.KAFKA_SASL_PASSWORD }}
         run: |
           set -euo pipefail
@@ -52,17 +53,28 @@ jobs:
 
           mkdir -p /srv/vdcore/kafka
 
+          if [ -d /srv/vdcore/kafka/client.properties ]; then
+            rm -rf /srv/vdcore/kafka/client.properties
+          fi
+
           cat > /srv/vdcore/kafka/kafka_server_jaas.conf <<EOF
           KafkaServer {
               org.apache.kafka.common.security.plain.PlainLoginModule required
               username="admin"
               password="${KAFKA_ADMIN_PASSWORD}"
               user_admin="${KAFKA_ADMIN_PASSWORD}"
-              user_django="${KAFKA_SASL_PASSWORD}";
+              user_${KAFKA_SASL_USERNAME}="${KAFKA_SASL_PASSWORD}";
           };
           EOF
 
+          cat > /srv/vdcore/kafka/client.properties <<EOF
+          security.protocol=SASL_PLAINTEXT
+          sasl.mechanism=PLAIN
+          sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_SASL_USERNAME}" password="${KAFKA_SASL_PASSWORD}";
+          EOF
+
           chmod 644 /srv/vdcore/kafka/kafka_server_jaas.conf
+          chmod 644 /srv/vdcore/kafka/client.properties
       
       - name: Deploy with Makefile
         run: make deploy

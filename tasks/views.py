@@ -14,12 +14,13 @@ logger = logging.getLogger("django")
 
 @login_required
 def create_task(request):
+    logger.info("=== create_task: method=%s POST=%s ===", request.method, bool(request.POST))
     if request.method == "POST":
         form = DownloadTaskForm(request.POST)
-        logger.info("POST data: %s", request.POST)
+        logger.info("POST data: %s", dict(request.POST))
         logger.info("Form valid: %s, errors: %s", form.is_valid(), form.errors)
         if form.is_valid():
-            logger.info("=== FORM VALID OK, начинаем отправку в Kafka ===")
+            logger.info("=== НАЧАЛО ОТПРАВКИ В KAFKA ===")
             start_id = form.cleaned_data["start_id"]
             end_id = form.cleaned_data["end_id"]
 

@@ -34,7 +34,7 @@ fix-perms:
 
 deploy: env-check
 	mkdir -p logs staticfiles media
-	chmod -R 777 logs staticfiles media
+	chmod -R 777 logs staticfiles media 2>/dev/null || true
 	docker compose build web
 	docker compose run --rm --entrypoint python web manage.py migrate --noinput
 	docker compose run --rm --entrypoint python web manage.py collectstatic --noinput

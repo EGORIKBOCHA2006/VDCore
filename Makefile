@@ -29,8 +29,7 @@ collectstatic: env-check
 	docker compose run --rm --entrypoint python web manage.py collectstatic --noinput
 
 fix-perms:
-	docker compose run --rm --user root --entrypoint sh web -c 'mkdir -p /app/logs && touch /app/logs/kafka.log && chown -R django:django /app/logs && chmod 755 /app/logs && chmod 664 /app/logs/kafka.log'
-
+	docker compose run --rm --user root --entrypoint sh web -c 'mkdir -p /app/logs /app/staticfiles && touch /app/logs/kafka.log && chown -R django:django /app/logs /app/staticfiles && chmod 755 /app/logs /app/staticfiles && chmod 664 /app/logs/kafka.log'
 deploy: env-check
 	docker compose build web
 	$(MAKE) fix-perms

@@ -1,0 +1,48 @@
+name: Deploy to self-hosted runner
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  deploy:
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Create .env from secrets
+        run: |
+          cat > .env << EOF
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          DJANGO_DEBUG=False
+          DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}
+
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+
+          PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }}
+          PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}
+
+          KAFKA_TASKS_TOPIC=download-tasks
+          KAFKA_STATUS_TOPIC=task-status-updates
+          KAFKA_SASL_USERNAME=${{ secrets.KAFKA_SASL_USERNAME }}
+          KAFKA_SASL_PASSWORD=${{ secrets.KAFKA_SASL_PASSWORD }}
+          KAFKA_CLUSTER_ID=${{ secrets.KAFKA_CLUSTER_ID }}
+          EOF
+
+      - name: Deploy with Makefile
+        run: make deploy
+
+      - name: Show running containers
+        run: make status

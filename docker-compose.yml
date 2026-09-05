@@ -81,7 +81,6 @@ services:
       KAFKA_STATUS_TOPIC: ${KAFKA_STATUS_TOPIC}
       KAFKA_SASL_USERNAME: ${KAFKA_SASL_USERNAME}
       KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}
-      web:
     volumes:
       - ./logs:/app/logs
 

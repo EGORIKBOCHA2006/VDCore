@@ -55,6 +55,7 @@ services:
     volumes:
       - ./kafka_server_jaas.conf:/etc/kafka/secrets/kafka_server_jaas.conf
       - ./client.properties:/etc/kafka/secrets/client.properties
+      
 
   web:
     build: .
@@ -82,6 +83,8 @@ services:
       KAFKA_SASL_USERNAME: ${KAFKA_SASL_USERNAME}
       KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}
     volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
       - ./logs:/app/logs
 
 volumes:

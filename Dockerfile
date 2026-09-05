@@ -40,5 +40,5 @@ USER django
 
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn", "tasks.wsgi:application"]
+ENTRYPOINT ["gunicorn", "config.wsgi:application"]
 CMD ["--bind", "0.0.0.0:8000", "--workers", "3"]

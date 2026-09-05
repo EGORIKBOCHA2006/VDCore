@@ -83,9 +83,9 @@ services:
       KAFKA_SASL_USERNAME: ${KAFKA_SASL_USERNAME}
       KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}
     volumes:
-      - ./staticfiles:/app/staticfiles
-      - ./media:/app/media
-      - ./logs:/app/logs
+      - /srv/vdcore/staticfiles:/app/staticfiles
+      - /srv/vdcore/media:/app/media
+      - /srv/vdcore/logs:/app/logs
 
 volumes:
   postgres_data:

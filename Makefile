@@ -10,6 +10,7 @@ env-check:
 
 build: env-check
 	docker compose build web
+	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
 
 up: env-check
 	docker compose up -d
@@ -38,7 +39,7 @@ deploy: env-check
 	docker compose run --rm web migrate --noinput
 	docker compose run --rm web collectstatic --noinput
 	docker compose up -d --force-recreate web
-	docker compose exec -u root web chown -R django:django /app/logs /app/staticfiles /app/media
+
 
 status:
 	docker compose ps
